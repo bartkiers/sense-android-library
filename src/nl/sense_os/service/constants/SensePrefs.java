@@ -416,10 +416,16 @@ public class SensePrefs {
 			 * @see SensePrefs#MAIN_PREFS
 			 */
 			public static final String SCREEN_ACTIVITY = "phonestate_screen_activity";
-			/**
-			 * @see SensePrefs#MAIN_PREFS
-			 */
-			public static final String PROXIMITY = "phonestate_proximity";
+            /**
+             * @see SensePrefs#MAIN_PREFS
+             */
+            public static final String PROXIMITY = "phonestate_proximity";
+            /**
+             * Key for preference that toggles use of the sensor for your phone's other apps.
+             * 
+             * @see SensePrefs#MAIN_PREFS
+             */
+            public static final String APPS = "phonestate_apps";
 			/**
 			 * @see SensePrefs#MAIN_PREFS
 			 */

@@ -8,10 +8,10 @@ import java.util.Map;
 
 import nl.sense_os.service.ambience.CameraLightSensor;
 import nl.sense_os.service.ambience.LightSensor;
+import nl.sense_os.service.ambience.MagneticFieldSensor;
 import nl.sense_os.service.ambience.NoiseSensor;
 import nl.sense_os.service.ambience.PressureSensor;
 import nl.sense_os.service.ambience.TemperatureSensor;
-import nl.sense_os.service.ambience.MagneticFieldSensor;
 import nl.sense_os.service.commonsense.DefaultSensorRegistrationService;
 import nl.sense_os.service.commonsense.SenseApi;
 import nl.sense_os.service.constants.SensePrefs;
@@ -29,6 +29,7 @@ import nl.sense_os.service.external_sensors.ZephyrBioHarness;
 import nl.sense_os.service.external_sensors.ZephyrHxM;
 import nl.sense_os.service.location.LocationSensor;
 import nl.sense_os.service.motion.MotionSensor;
+import nl.sense_os.service.phonestate.AppsSensor;
 import nl.sense_os.service.phonestate.BatterySensor;
 import nl.sense_os.service.phonestate.PhoneActivitySensor;
 import nl.sense_os.service.phonestate.ProximitySensor;
@@ -87,6 +88,7 @@ public class SenseService extends Service {
 	private ServiceStateHelper state;
     
 	//private DataTransmitter dataTransmitter;
+    private AppsSensor appsSensor;
 	private BatterySensor batterySensor;
 	private DeviceProximity deviceProximity;
 	private LightSensor lightSensor;  
@@ -1129,12 +1131,19 @@ public class SenseService extends Service {
 					batterySensor = null;
 				}
 
-				// check phone activity sensor presence
-				if (phoneActivitySensor != null) {
-					Log.w(TAG, "phone activity sensor is already present!");
-					phoneActivitySensor.stopPhoneActivitySensing();
-					phoneActivitySensor = null;
-				}
+                // check phone activity sensor presence
+                if (phoneActivitySensor != null) {
+                    Log.w(TAG, "phone activity sensor is already present!");
+                    phoneActivitySensor.stopPhoneActivitySensing();
+                    phoneActivitySensor = null;
+                }
+
+                // check apps sensor presence
+                if (appsSensor != null) {
+                    Log.w(TAG, "apps sensor is already present!");
+                    appsSensor.stop();
+                    appsSensor = null;
+                }
 
 				// get sample rate
 				final SharedPreferences mainPrefs = getSharedPreferences(SensePrefs.MAIN_PREFS,
@@ -1180,10 +1189,14 @@ public class SenseService extends Service {
 								phoneActivitySensor = PhoneActivitySensor.getInstance(SenseService.this);
 								phoneActivitySensor.startPhoneActivitySensing(finalInterval);
 							}
-							if (mainPrefs.getBoolean(PhoneState.PROXIMITY, true)) {
-								proximitySensor = ProximitySensor.getInstance(SenseService.this);
-								proximitySensor.startProximitySensing(finalInterval);
-							}
+                            if (mainPrefs.getBoolean(PhoneState.PROXIMITY, true)) {
+                                proximitySensor = ProximitySensor.getInstance(SenseService.this);
+                                proximitySensor.startProximitySensing(finalInterval);
+                            }
+                            if (mainPrefs.getBoolean(PhoneState.APPS, true)) {
+                                appsSensor = AppsSensor.getInstance(SenseService.this);
+                                appsSensor.start();
+                            }
 							phoneStateListener = SensePhoneState.getInstance(SenseService.this);
 							phoneStateListener.startSensing(finalInterval);
 						} catch (Exception e) {
@@ -1208,14 +1221,14 @@ public class SenseService extends Service {
 					batterySensor.stopBatterySensing();
 					batterySensor = null;
 				}
-				if (null != phoneActivitySensor) {
-					phoneActivitySensor.stopPhoneActivitySensing();
-					phoneActivitySensor = null;
-				}
-//				if (null != phoneStateHandler) {
-//					phoneStateHandler.getLooper().quit();
-//					phoneStateHandler = null;
-//				}
+                if (null != phoneActivitySensor) {
+                    phoneActivitySensor.stopPhoneActivitySensing();
+                    phoneActivitySensor = null;
+                }
+                if (null != appsSensor) {
+                    appsSensor.stop();
+                    appsSensor = null;
+                }
 			}
 		}
 	}
