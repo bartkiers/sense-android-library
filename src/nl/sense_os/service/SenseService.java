@@ -1195,7 +1195,7 @@ public class SenseService extends Service {
                             }
                             if (mainPrefs.getBoolean(PhoneState.APPS, true)) {
                                 appsSensor = AppsSensor.getInstance(SenseService.this);
-                                appsSensor.start();
+                                appsSensor.start(finalInterval);
                             }
 							phoneStateListener = SensePhoneState.getInstance(SenseService.this);
 							phoneStateListener.startSensing(finalInterval);
