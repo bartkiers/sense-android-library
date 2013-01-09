@@ -70,6 +70,8 @@ public class AppsSensor implements PeriodicPollingSensor {
         List<String> installedAppLabels = new ArrayList<String>();
         for (ResolveInfo installedApp : installedApps) {
             String app = installedApp.loadLabel(pm).toString();
+            // TODO fix filthy way of filtering out an unparseable character ('tm')
+            app = app.replaceAll("\u2122", "");
             installedAppLabels.add(app);
         }
         sendInstalledApps(installedAppLabels);
