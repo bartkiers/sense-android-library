@@ -1193,7 +1193,7 @@ public class SenseService extends Service {
                                 proximitySensor = ProximitySensor.getInstance(SenseService.this);
                                 proximitySensor.startProximitySensing(finalInterval);
                             }
-                            if (mainPrefs.getBoolean(PhoneState.APPS, true)) {
+                            if (mainPrefs.getBoolean(PhoneState.APPS, false)) {
                                 appsSensor = AppsSensor.getInstance(SenseService.this);
                                 appsSensor.start(finalInterval);
                             }
